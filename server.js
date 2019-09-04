@@ -27,14 +27,18 @@ server.post('/api/posts', (req,res) => {
             })
     }
 })
-
+//FIX THIS. Uhm ask about this.
 server.post('/api/posts/:id/comments', (res, req) => {
-    db.findById(req.params.id)
+    const { text, postId } = req.body
+
+    if(!text || !postId){
+        res.status(400).json({ message: "Please provide text for the comment." })
+    } else {
+        db.insert(req.body)
    .then(message => {
        if(message){
            res.status(200).json(message)
-       } else if (!text || !post_id){
-        res.status(400).json({ message: "Please provide text for the comment." })
+       
        }else{
         res.status(404).json({ message: 'The post with the specified ID does not exist.'})
        }
@@ -46,7 +50,10 @@ server.post('/api/posts/:id/comments', (res, req) => {
         "There was an error while saving the comment to the database" 
         })
     })
+    }
 })
+    
+
 
 server.get('/api/posts', (req, res) => {
     db.find()
@@ -57,13 +64,14 @@ server.get('/api/posts', (req, res) => {
         res.status(500).jason({error: "The users information could not be retrieved."})
     })     
 })
-
+//FIX ELSE STATEMENT
 server.get('/api/posts/:id', (req, res) => {
     db.findCommentById(req.params.id)
     .then(pos => {
-        if(pos){
+        if(req.params.id !== []){
+            console.log(pos)
             res.status(200).json(pos)
-        } else {
+        } else{
             res.status(404).json({message: "The post with the specified ID does not exist."})
         }
     })
